@@ -62,7 +62,6 @@ async function initializeDatabase() {
             );
         `;
         await pool.query(query);
-        // console.log('Tables "images" et "users" créées ou déjà existantes.');
     } catch (error) {
         console.error('Erreur lors de la création des tables :', error);
     }
@@ -151,8 +150,6 @@ async function insertMetadata(imagePath, metadata, outputPath) {
         await exiftool.write(outputPath, {
             UserComment: metadata
         });
-
-        console.log('Métadonnées insérées avec succès !');
     } catch (error) {
         console.error('Erreur lors de l\'insertion des métadonnées :', error);
         throw error; // Propager l'erreur pour pouvoir la gérer dans la route
@@ -163,7 +160,6 @@ async function insertMetadata(imagePath, metadata, outputPath) {
 async function extractMetadata(imagePath) {
     try {
         const metadata = await exiftool.read(imagePath);
-        console.log('Métadonnées complètes:', metadata);
 
         return metadata.UserComment || 'Aucune métadonnée trouvée';
     } catch (error) {
@@ -216,7 +212,6 @@ app.post('/upload', upload.single('image'), async (req, res) => {
 
 // Endpoint pour vérifier et extraire les métadonnées
 app.post('/verify', upload.single('image'), async (req, res) => {
-    console.log('Fichier reçu pour vérification :', req.file); // Log pour voir le fichier reçu
     try {
         if (!req.file) return res.status(400).send('Aucun fichier uploadé.');
 
@@ -224,7 +219,6 @@ app.post('/verify', upload.single('image'), async (req, res) => {
         const metadata = await extractMetadata(filePath); // Extraction des métadonnées
 
         res.status(200).send({ message: 'Métadonnées extraites avec succès !', metadata });
-        console.log(metadata);
 
     } catch (error) {
         console.error('Erreur lors de l\'extraction des métadonnées :', error);
